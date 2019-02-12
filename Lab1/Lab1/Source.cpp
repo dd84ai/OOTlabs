@@ -5,34 +5,25 @@
 #include <algorithm>
 using namespace std;
 #define N 100000
-double set[N], v, a, b;
-void define_input_values()
-{
-	v = 5, a = 0, b = 0;
-	a = (v + 1) / 2; b = 1;
-}
+double set[N];
 double generated_x(double g1, double g2)
 {
 	return (2 / M_PI)*asin(((2 * g1) / (g1 + g2)) - 1);
 }
 double MomentPoryadka(int poryadok, double MathOjid)
 {
-	double Summ = 0, InternalSumm = 1; int j = 0;
+	double Summ = 0;
 	for (int i = 0; i < N; i++)
-	{
-		for (InternalSumm = 1, j = 0; j < poryadok; j++) InternalSumm *= (set[i] - MathOjid);
-
-		Summ += InternalSumm;
-	}
+		Summ += pow(set[i] - MathOjid,poryadok);
 	return Summ;
 }
 int main()
 {
-	define_input_values();
-
 	typedef mt19937 G;
 	typedef gamma_distribution<> D;
 	G g;  // seed if you want with integral argument
+	double v = 5;
+	double a = (v + 1) / 2, b = 1;
 	double k = a;      // http://en.wikipedia.org/wiki/Gamma_distribution
 	double theta = b;
 	D d(k, theta);
