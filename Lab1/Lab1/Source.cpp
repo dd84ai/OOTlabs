@@ -4,62 +4,38 @@
 #include <math.h>
 #include <algorithm>
 using namespace std;
-
 #define N 100000
-
-double v = 5;
-double a = 0;
-double b = 0;
 double set[N];
-void define_input_values()
-{
-	//cout << "v = "; cin >> v;
-	a = (v + 1) / 2;
-	b = 1;
-}
 double generated_x(double g1, double g2)
 {
-	//cout << g1 << endl << g2 << endl;
-
 	return (2 / M_PI)*asin(((2 * g1) / (g1 + g2)) - 1);
+}
+double MomentPoryadka(int poryadok, double MathOjid)
+{
+	double Summ = 0;
+	for (int i = 0; i < N; i++)
+		Summ += pow(set[i] - MathOjid,poryadok);
+	return Summ;
 }
 int main()
 {
-	define_input_values();
-
 	typedef mt19937 G;
 	typedef gamma_distribution<> D;
 	G g;  // seed if you want with integral argument
+	double v = 5;
+	double a = (v + 1) / 2, b = 1;
 	double k = a;      // http://en.wikipedia.org/wiki/Gamma_distribution
 	double theta = b;
 	D d(k, theta);
 
-	//cout << d(g) << '\n';
-
 	for (int i = 0; i < N; i++)
 		set[i] = generated_x(d(g), d(g));
 
-	double MathOjid = 0;
-	for (int i = 0; i < N; i++)
-		MathOjid += set[i];
-	MathOjid /= N;
-
-	double SredneKvadrat = 0;
-	for (int i = 0; i < N; i++)
-		SredneKvadrat += (set[i] - MathOjid)*(set[i] - MathOjid);
-	double Dispersion = SredneKvadrat / N;//Remember!
-	SredneKvadrat = sqrt(Dispersion);
-
-	double Assimetry = 0;
-	for (int i = 0; i < N; i++)
-		Assimetry += (set[i] - MathOjid)*(set[i] - MathOjid)*(set[i] - MathOjid);
-	Assimetry /= (N * sqrt(Dispersion * Dispersion * Dispersion));
-
-	double Excess = 0;
-	for (int i = 0; i < N; i++)
-		Excess += (set[i] - MathOjid)*(set[i] - MathOjid)*(set[i] - MathOjid)*(set[i] - MathOjid);
-	Excess /= (N * Dispersion * Dispersion);
-
+	double MathOjid = MomentPoryadka(1, 0) / N;
+	double Dispersion = MomentPoryadka(2, MathOjid) / N;
+	double SredneKvadrat = sqrt(Dispersion);
+	double Assimetry = MomentPoryadka(3, MathOjid) / (N * sqrt(Dispersion * Dispersion * Dispersion));
+	double Excess = MomentPoryadka(4, MathOjid) / (N * Dispersion * Dispersion);
 	std::sort(std::begin(set), std::end(set));
 
 	cout << "N = " << N << endl;
